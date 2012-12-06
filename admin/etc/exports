@@ -1,0 +1,13 @@
+
+# Clients
+# auto.master
+# /net    -hosts  -fstype=nfs,tcp,mountproto=tcp,soft,intr,timeo=14,rsize=8192,wsize=8192,nolock
+
+### Global User Home
+/share/home     10.0.0.0/255.255.0.0(rw,sync,root_squash,no_subtree_check)
+
+### Global Scratch Space
+/share/scr      10.0.0.0/255.255.0.0(rw,async,root_squash,no_subtree_check)
+
+### Global SGI
+/opt/sgi        10.0.0.0/255.255.0.0(ro,async,root_squash,no_subtree_check)

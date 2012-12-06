@@ -1,0 +1,13 @@
+#!/bin/bash
+
+iscsiadm -m session -P3 | \
+awk '{
+  if(match($0,"Target")) {
+    split($0,a);
+    printf("\n%s\n", a[2]);
+  }
+  if(match($0, "Attached scsi")) {
+    split($0,b);
+    printf("%4s %s\n", b[4],b[6]);
+  }
+}'

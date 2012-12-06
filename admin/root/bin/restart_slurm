@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "Restarting on admin"
+/etc/rc.d/slurmdbd restart
+/etc/rc.d/slurm restart
+
+echo "Restarting on nodes"
+./cluster_rc slurm restart /etc/nodes
+

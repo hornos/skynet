@@ -1,0 +1,80 @@
+### globals
+gkn="kernel"
+gcn="config"
+
+function error() {
+  echo -e "\n${gbn} ERROR: ${1}\n"
+  exit ${2:-1}
+}
+
+### namespaces
+function namedir() {
+  echo "$(dirname ${1:-${BASH_SOURCE}})"
+}
+
+function funcname() {
+  local _f=${1:-${FUNCNAME}}
+  echo ${_f##*/}
+}
+
+###
+function require() {
+  local _u=${1}
+  if ! test "$(whoami)" = "${_u}" ; then
+    error "run as ${_u}"
+  fi
+}
+
+### import
+function import() {
+  local _np="${1}"
+  if test -z "${_np}" ; then
+    return ${_FALSE_}
+  fi
+
+  local _lib="${_np}/${gkn}"
+  local _cfg="${_np}/${gcn}"
+  local _p="$(namedir)"
+
+  # read cfg
+  local _p_cfg="${_p}/${_cfg}"
+  if test -r "${_p_cfg}" ; then
+    source "${_p_cfg}"
+  fi
+
+  # load OS specific library config
+  _p_cfg="${_p}/${gcn}.${OSTYPE}"
+  if test -r ${_p_cfg} ; then
+    source "${_p_cfg}"
+  fi
+
+  # user specific library config
+  _p_cfg="${_p}/${gcn}.${USER}"
+  if test -r ${_p_cfg} ; then
+    source "${_p_cfg}"
+  fi
+
+  # read lib
+  local _p_lib="${_p}/${_lib}"
+  if test -r "${_p_lib}" ; then
+    source "${_p_lib}"
+  else
+    error "Library not found: ${_p_lib}"
+  fi
+}
+
+###
+function arg() {
+  local _t=${1}
+  local _i=${2:-1}
+  local _s=${3:-:}
+  echo ${_t} | \
+  awk -v i=${_i} -v s=${_s} '{split($0,a,s); print a[i];}'
+}
+
+### pv
+gpv=false
+which pv &> /dev/null
+if test $? -eq 0; then
+  gpv=true
+fi

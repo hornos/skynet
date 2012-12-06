@@ -1,0 +1,24 @@
+#!/bin/bash
+
+gbn=$(basename $BASH_SOURCE)
+gdn=$(dirname $BASH_SOURCE)
+_out="${gdn}/stat"
+
+_shf3="${gdn}/../shf3/lib/header"
+if ! test -r "${_shf3}" ; then
+  echo "Not found: ${_shf3}" > "${_out}"
+  exit 1
+fi
+source "${_shf3}"
+
+/opt/sgi/slurm/2.2.7/bin/sjstat | \
+awk '/^[0-9]/{
+  split($0,a);
+  printf("%8-d %8-s %6d %9-s %7-s %10s  %s\n",a[1],"***",a[3],a[4],a[5],a[6],a[7]);
+  next;
+} {print}' > "${_out}"
+
+chmod go+r "${_out}"
+
+import ssh/ftp
+put ngb "${_out}"

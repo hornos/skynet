@@ -1,0 +1,25 @@
+#!/bin/bash
+
+bn=$(basename $0)
+nds="${1}"
+ndsfile="nodes"
+usr="admin"
+pass=""
+rcp="/etc/rc.d"
+ifc="lanplus"
+act="${2:-sdr}"
+params="\"CPU[0-9] Temp|System\""
+filt="grep -E $params"
+
+echo filt:$filt
+echo nds:$nds
+
+if [ "$1" = "all" ]; then 
+  for h in $(cat ${ndsfile}) ; do
+    echo $h
+    ipmitool -I $ifc -H ${h} -U ${usr} -P ${pass} ${act} | $filt
+  done
+  exit 1
+fi
+
+ipmitool -I $ifc -H ${nds}-bmc -U ${usr} -P ${pass} ${act} | $filt

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+nds="$1"
+
+echo "Creating node list..."
+eszrnodes -n admin    > "${nds}"
+# login should be treated separately
+# eszrnodes -n login   >> "${nds}"
+eszrnodes -n gpu     >> "${nds}"
+eszrnodes -n compute >> "${nds}"
+
+exit 0

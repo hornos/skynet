@@ -1,0 +1,3 @@
+#!/bin/bash
+
+eszrnodes -n compute > nodes

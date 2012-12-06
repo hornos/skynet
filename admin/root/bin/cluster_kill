@@ -1,0 +1,16 @@
+#!/bin/bash
+
+bn=$(basename $0)
+nds="${1:-${bn}.nds}"
+act="${2:-vasp}"
+
+if ! test -r "${nds}" ; then
+  echo "error: ${nds}"
+  exit 1
+fi
+
+pssh -o . -h "${nds}" "ps aux | grep ${act} | awk '{print $2}'"
+
+for i in n* ; do
+  cat $i
+done

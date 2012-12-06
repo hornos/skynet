@@ -1,0 +1,10 @@
+#!/bin/bash
+
+nds="./nodes"
+if test -r "${nds}" ; then
+  rm -fv "${nds}"
+fi
+
+./nodes_gen
+
+psshmgr rc "${nds}" munge restart

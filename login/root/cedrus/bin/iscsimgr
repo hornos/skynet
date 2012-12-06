@@ -1,0 +1,86 @@
+#!/bin/bash
+source "$(dirname ${0})/../lib/header"
+import net/iscsi
+
+function iscsimgr/usage() {
+  echo " Usage: ${gbn} options"
+  echo "               -i <INITIATOR>"
+  echo "               -t <TARGETS>"
+  echo "        login: -l"
+  echo "       logout: -u"
+  echo "    discovery: -d"
+  echo "        clean: -c"
+  echo "      on boot: -b"
+  exit 1
+}
+
+_etc="/etc/iscsi/nodes"
+
+_i="./initiator"
+_t="./targets"
+_u=false
+_l=false
+_d=false
+_c=false
+_b=false
+
+while getopts buldchi:t: o; do
+  case "$o" in
+    i) _i=$OPTARG;;
+    t) _t=$OPTARG;;
+    u) _u=true;;
+    l) _l=true;;
+    d) _d=true;;
+    c) _c=true;;
+    b) _b=true;;
+    h) iscsimgr/usage;;
+  esac
+done
+
+### main
+if ${_u} ; then
+  net/iscsi/logout
+  exit $?
+fi
+
+if ${_l} ; then
+  net/iscsi/login
+  exit $?
+fi
+
+for j in "${_i}" "${_t}" ; do
+  if ! test -r "${_i}" ; then
+    echo "No ${j}"
+    exit 1
+  fi
+  source "${j}"
+done
+
+
+# initiator
+ini_acc=$(arg "${iscsi_initiator}" 1 "@")
+ini_iqn=$(arg "${iscsi_initiator}" 2 "@")
+ini_user=$(arg "${ini_acc}" 1 ":")
+ini_pass=$(arg "${ini_acc}" 2 ":")
+
+# targets
+for t in ${iscsi_targets[@]} ; do
+  t_iqn=$(arg "${t}" 1 "|")
+  t_acc=$(arg "${t}" 2 "|")
+  t_acc1=$(arg "${t_acc}" 1 "@")
+  t_acc2=$(arg "${t_acc}" 2 "@")
+  t_user=$(arg "${t_acc1}" 1 ":")
+  t_pass=$(arg "${t_acc1}" 2 ":")
+  t_host=$(arg "${t_acc2}" 1 ":")
+  t_port=$(arg "${t_acc2}" 2 ":")
+
+  if ${_d} ; then
+    net/iscsi/discovery ${t_iqn} ${t_host} ${t_port}
+  else
+    if ${_c} ; then
+      rm -fR "${_etc}/${t_iqn}"
+    fi
+    net/iscsi/init ${ini_user} ${ini_pass} ${t_host} ${t_port} ${t_iqn} ${t_user} ${t_pass} ${_b}
+  fi
+  sleep 2
+done

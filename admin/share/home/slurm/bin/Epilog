@@ -1,0 +1,10 @@
+#!/bin/bash
+
+gbn=$(basename $BASH_SOURCE)
+echo ""
+echo "--- Begin ${gbn}: $HOSTNAME ---"
+
+# workaround: kill all user procs after job finish
+# /share/home/slurm/bin/epilog.userkill
+
+echo "--- End   ${gbn}: $HOSTNAME ---"

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+_down=$(sinfo | grep down | awk '{print $6}')
+if test -z "${_down}" ; then
+  exit 1
+fi
+scontrol show hostname "${_down}" > nodes.down
+
+echo "Munge restart: ${_down}"
+./cluster_cmd "rm /var/run/munge/munge.socket.2" nodes.down
+./cluster_rc munge restart nodes.down
+
+echo "Slurm restart: ${_down}"
+./cluster_rc slurm restart nodes.down
+
+

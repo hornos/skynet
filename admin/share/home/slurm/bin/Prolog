@@ -1,0 +1,8 @@
+#!/bin/bash
+
+gbn=$(basename $BASH_SOURCE)
+echo ""
+echo "--- Begin ${gbn}: $HOSTNAME ---"
+# ulimit -v unlimited
+ulimit -a
+echo "--- End   ${gbn}: $HOSTNAME ---"

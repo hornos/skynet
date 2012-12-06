@@ -1,0 +1,19 @@
+#!/bin/bash
+
+bn=$(basename $0)
+nds="${1:-${bn}.nds}"
+usr="admin"
+pass=""
+rcp="/etc/rc.d"
+ifc="lanplus"
+act="${2:-sdr}"
+
+if ! test -r "${nds}" ; then
+  exit 1
+fi
+
+for h in $(cat ${nds}) ; do
+  echo $h
+  ipmitool -I "$ifc" -H ${h} -U ${usr} -P ${pass} ${act} | \
+  grep -E "CPU[0-9] Temp|System"
+done

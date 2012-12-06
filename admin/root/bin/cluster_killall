@@ -1,0 +1,12 @@
+#!/bin/bash
+
+bn=$(basename $0)
+nds="${2:-${bn}.nds}"
+act="${1:-vasp}"
+
+if ! test -r "${nds}" ; then
+  echo "error: ${nds}"
+  exit 1
+fi
+
+pssh -h "${nds}" "killall" "${act}"

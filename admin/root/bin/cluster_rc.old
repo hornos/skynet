@@ -1,0 +1,14 @@
+#!/bin/bash
+
+bn=$(basename $0)
+nds="${3:-${bn}.nds}"
+ser="${1:-slurm}"
+act="${2:-restart}"
+rcp="/etc/rc.d"
+
+if ! test -r "${nds}" ; then
+  echo "error: ${nds}"
+  exit 1
+fi
+
+pssh -h "${nds}" "${rcp}/${ser} ${act}"

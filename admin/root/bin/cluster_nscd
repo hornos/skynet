@@ -1,0 +1,11 @@
+#!/bin/bash
+
+bn=$(basename $0)
+nds="${1:-${bn}.nds}"
+ent="${3:-group}"
+
+if ! test -r "${nds}" ; then
+  exit 1
+fi
+
+pssh -h "${nds}" "nscd -i ${ent}"

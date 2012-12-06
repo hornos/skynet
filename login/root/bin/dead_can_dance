@@ -1,0 +1,8 @@
+#!/bin/bash
+# $6
+for p in $(who -u | grep old | awk '{print $1 ":" $7}' | sort) ; do
+  pid=${p##*:}
+  usr=${p%%:*}
+  echo "Killing old login $usr ($pid)"
+  kill -9 ${pid}
+done
